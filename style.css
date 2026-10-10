@@ -5,8 +5,6 @@
    tramas de puntos y tipografía condensada muy gruesa.
    ========================================================= */
 
-@import url("https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Oswald:wght@500;700&display=swap");
-
 :root {
   --rojo: #e60012;
   --rojo-osc: #9e000c;
@@ -29,6 +27,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body { min-height: 100%; }
+html { overflow-x: hidden; }
 
 body {
   font-family: var(--texto);
@@ -252,7 +251,7 @@ button:disabled { cursor: not-allowed; }
   display: flex; flex-direction: column; gap: 14px;
   padding: 26px 22px 24px;
   background: var(--negro);
-  position: relative;
+  position: relative; overflow: hidden;
   clip-path: var(--corte-1);
   transform: rotate(-1.5deg);
   transition: transform .2s cubic-bezier(.2,1.6,.4,1);
@@ -311,8 +310,9 @@ button:disabled { cursor: not-allowed; }
 }
 
 .btn-estudiar {
-  margin-top: auto; padding: 12px;
-  font-family: var(--display); font-size: 1.2rem; letter-spacing: .03em; text-transform: uppercase;
+  margin-top: auto; padding: 10px 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  font-family: var(--display); font-size: 1.35rem; letter-spacing: .03em; text-transform: uppercase;
   white-space: nowrap;
   background: var(--rojo); color: var(--blanco);
   clip-path: var(--corte-3);
@@ -323,7 +323,7 @@ button:disabled { cursor: not-allowed; }
 .btn-estudiar:disabled { background: #2e2e2e; color: #666; }
 
 /* --- Botones generales --- */
-.acciones { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.acciones { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 22px; }
 .btn {
   position: relative;
   display: flex; align-items: center; gap: 16px; text-align: left;
@@ -347,7 +347,7 @@ button:disabled { cursor: not-allowed; }
   opacity: .75; margin-top: 6px;
 }
 .btn-relax { transform: rotate(1deg); }
-.btn-fin { transform: rotate(-1deg); clip-path: var(--corte-2); }
+.btn-fin { grid-column: 1 / -1; transform: rotate(-1deg); clip-path: var(--corte-2); justify-content: center; }
 .btn-fin.destacado { background: var(--blanco); color: var(--negro); animation: latido 1s ease-in-out infinite; }
 .btn-fin.destacado .btn-txt { color: var(--rojo); }
 @keyframes latido { 50% { transform: rotate(-3deg) scale(1.05); } }
@@ -523,7 +523,7 @@ button:disabled { cursor: not-allowed; }
    ========================================================= */
 #pantalla-final.activa { display: grid; place-items: center; }
 .final-card {
-  width: min(580px, 100%); text-align: center;
+  width: min(720px, 100%); text-align: center;
   padding: 50px 40px;
   background: var(--negro);
   clip-path: polygon(0 4%, 100% 0, 97% 100%, 3% 96%);
@@ -541,14 +541,468 @@ button:disabled { cursor: not-allowed; }
 }
 .final-card.perdido .final-titulo { background: var(--rojo); color: var(--blanco); box-shadow: 8px 8px 0 var(--blanco); }
 .final-texto { color: var(--gris); line-height: 1.55; margin-bottom: 30px; font-size: 1.05rem; }
-.final-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 34px; }
+.final-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 34px; }
 .final-stat {
   padding: 14px 8px; background: var(--rojo);
   clip-path: var(--corte-1);
 }
-.final-stat:nth-child(2) { background: var(--blanco); color: var(--negro); clip-path: var(--corte-2); }
+.final-stat:nth-child(even) { background: var(--blanco); color: var(--negro); clip-path: var(--corte-2); }
 .final-stat b { display: block; font-family: var(--display); font-weight: 400; font-size: 2.2rem; line-height: 1.1; }
 .final-stat span { font-size: .82rem; font-weight: 500; }
+
+/* =========================================================
+   NUEVOS ELEMENTOS (clima, compañeros, logros, boletín…)
+   ========================================================= */
+
+/* --- Teclas --- */
+kbd {
+  display: inline-block;
+  font-family: var(--bloque); font-size: .62rem; line-height: 1;
+  padding: 3px 6px; background: var(--blanco); color: var(--negro);
+  transform: skewX(-12deg); vertical-align: middle;
+}
+.btn kbd { position: absolute; right: 22px; top: 12px; opacity: .8; }
+.btn:hover:not(:disabled) kbd { background: var(--negro); color: var(--blanco); }
+.btn-estudiar { position: relative; }
+.btn-estudiar kbd { position: absolute; right: 18px; top: 8px; background: var(--negro); color: var(--blanco); font-size: .6rem; }
+.btn-estudiar small {
+  font-family: var(--texto); font-weight: 500; font-size: .76rem; text-transform: none; letter-spacing: 0;
+  opacity: .9;
+}
+
+/* --- Botón de sonido --- */
+.btn-sonido {
+  position: fixed; right: 16px; bottom: 16px; z-index: 55;
+  width: 52px; height: 52px; font-size: 1.5rem;
+  background: var(--negro);
+  clip-path: polygon(10% 0, 100% 8%, 90% 100%, 0 92%);
+  transition: transform .15s;
+}
+.btn-sonido:hover { transform: scale(1.12) rotate(-6deg); background: var(--blanco); }
+
+/* --- Calendario: festivos y recuperaciones --- */
+.cal-dia.festivo { background: #6b6b6b; }
+.cal-dia.festivo.pasado { background: var(--amarillo); }
+.cal-dia.recuperacion { background: var(--amarillo); box-shadow: 0 0 0 1px var(--negro); }
+
+/* --- Panel de clima --- */
+.fila-estado { display: grid; gap: 22px; margin-bottom: 24px; }
+.fila-estado .energia-panel { margin-bottom: 0; }
+.clima-panel {
+  display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; align-items: center;
+  padding: 16px 28px;
+  background: var(--negro);
+  clip-path: var(--corte-1);
+  transform: rotate(.8deg);
+}
+.clima-ico {
+  font-size: 3rem; line-height: 1; grid-row: span 2;
+  filter: drop-shadow(3px 3px 0 var(--rojo));
+  animation: balanceo 3s ease-in-out infinite;
+}
+@keyframes balanceo { 50% { transform: rotate(-8deg) scale(1.08); } }
+.clima-info { display: flex; flex-direction: column; gap: 2px; }
+.clima-fecha {
+  align-self: flex-start;
+  font-family: var(--bloque); font-size: .72rem; letter-spacing: .12em;
+  background: var(--rojo); padding: 2px 10px; transform: skewX(-15deg);
+}
+.clima-nombre { font-family: var(--display); font-weight: 400; font-size: 1.9rem; text-transform: uppercase; line-height: 1.05; }
+.clima-desc { font-size: .92rem; color: var(--gris); font-weight: 500; }
+.clima-tags { grid-column: 2; display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  font-family: var(--bloque); font-size: .7rem; text-transform: uppercase; letter-spacing: .05em;
+  background: var(--blanco); color: var(--negro); padding: 3px 10px; transform: skewX(-12deg);
+}
+.tag.rojo { background: var(--rojo); color: var(--blanco); }
+
+/* --- Asignaturas: veces estudiada hoy --- */
+.asig-veces {
+  align-self: flex-start; margin: -6px 0 -4px;
+  font-family: var(--bloque); font-size: .68rem; text-transform: uppercase;
+  background: var(--amarillo); color: var(--negro); padding: 2px 8px; transform: skewX(-12deg);
+}
+.asig-veces:empty { display: none; }
+
+/* --- Compañeros --- */
+.subtitulo {
+  display: inline-block; margin: 34px 0 16px;
+  font-family: var(--display); font-weight: 400; font-size: 2rem; text-transform: uppercase;
+  background: var(--negro); color: var(--blanco); padding: 2px 22px;
+  transform: rotate(-2deg); clip-path: var(--corte-3);
+}
+.companeros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.comp {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 20px 20px 18px;
+  background: var(--blanco); color: var(--negro);
+  clip-path: var(--corte-2);
+  transform: rotate(1deg);
+}
+.comp:nth-child(2) { transform: rotate(-1deg); clip-path: var(--corte-1); }
+.comp-head { display: flex; align-items: center; gap: 12px; }
+.comp-emoji {
+  font-size: 2rem; width: 52px; height: 52px; display: grid; place-items: center; flex-shrink: 0;
+  background: var(--negro);
+  clip-path: polygon(10% 0, 100% 8%, 90% 100%, 0 90%);
+}
+.comp-nombre { display: block; font-family: var(--display); font-weight: 400; font-size: 1.6rem; text-transform: uppercase; line-height: 1; }
+.comp-head small { font-size: .8rem; font-weight: 500; color: #555; }
+.comp-amistad { display: flex; gap: 4px; font-size: 1.15rem; color: #cfcfcf; }
+.comp-amistad .lleno { color: var(--rojo); animation: pop .4s; }
+.comp-perks { list-style: none; font-size: .8rem; font-weight: 500; line-height: 1.5; color: #444; }
+.comp-perks li::before { content: "▸ "; color: var(--rojo); }
+.comp-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto; }
+.comp-botones button {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 8px 6px;
+  font-family: var(--display); font-size: 1.1rem; text-transform: uppercase;
+  background: var(--negro); color: var(--blanco);
+  clip-path: var(--corte-3);
+  transition: transform .15s cubic-bezier(.2,1.8,.4,1), background .1s;
+}
+.comp-botones button small { font-family: var(--texto); font-size: .68rem; text-transform: none; opacity: .85; }
+.comp-botones .btn-apuntes { background: var(--rojo); }
+.comp-botones button:hover:not(:disabled) { transform: scale(1.06) rotate(-2deg); background: var(--rojo); }
+.comp-botones .btn-apuntes:hover:not(:disabled) { background: var(--negro); }
+.comp-botones button:disabled { background: #cfcfcf; color: #888; }
+
+/* --- Números flotantes --- */
+.flotante {
+  position: fixed; z-index: 70; pointer-events: none;
+  font-family: var(--display); font-size: 1.6rem;
+  color: var(--blanco); background: var(--negro);
+  padding: 0 10px; transform: translate(-50%, 0) rotate(-6deg);
+  animation: flotar-num 1.1s cubic-bezier(.2,1.2,.4,1) forwards;
+}
+.flotante.nivel { background: var(--blanco); color: var(--negro); }
+.flotante.estres { background: var(--rojo); }
+.flotante.bien { background: var(--amarillo); color: var(--negro); }
+@keyframes flotar-num {
+  0%   { opacity: 0; translate: 0 10px; scale: .5; }
+  20%  { opacity: 1; translate: 0 -10px; scale: 1.15; }
+  100% { opacity: 0; translate: 0 -70px; scale: 1; }
+}
+
+.consola-body li.clima { background: #2b2b2b; color: var(--blanco); font-style: italic; }
+
+/* --- Transición entre días --- */
+.transicion {
+  position: fixed; inset: 0; z-index: 60;
+  display: none; place-items: center;
+  background: var(--negro);
+  cursor: pointer;
+}
+.transicion.activa { display: grid; animation: tr-entrar .35s cubic-bezier(.2,1,.4,1) both; }
+.transicion.saliendo { animation: tr-salir .35s cubic-bezier(.6,0,.8,.2) both; }
+@keyframes tr-entrar { from { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); } to { clip-path: polygon(0 0, 130% 0, 100% 100%, 0 100%); } }
+@keyframes tr-salir  { from { clip-path: polygon(0 0, 130% 0, 100% 100%, 0 100%); } to { clip-path: polygon(130% 0, 130% 0, 100% 100%, 100% 100%); } }
+.tr-franja {
+  position: absolute; left: -10%; right: -10%; top: 50%; height: 220px;
+  background: var(--rojo);
+  transform: translateY(-50%) rotate(-8deg);
+  animation: franja .5s cubic-bezier(.2,1.4,.4,1) both;
+}
+@keyframes franja { from { transform: translate(-100%, -50%) rotate(-8deg); } }
+.tr-contenido {
+  position: relative;
+  display: grid; grid-template-columns: auto auto; align-items: end; gap: 0 22px;
+  transform: rotate(-8deg);
+}
+.tr-semana {
+  font-family: var(--display); font-size: clamp(3rem, 10vw, 6rem); line-height: 1;
+  color: var(--negro); background: var(--blanco); padding: 0 16px;
+  animation: caer-txt .4s .1s cubic-bezier(.2,1.6,.4,1) both;
+}
+.tr-fecha {
+  font-family: var(--display); font-size: clamp(5rem, 18vw, 11rem); line-height: .85;
+  color: var(--blanco); text-shadow: 8px 8px 0 var(--negro);
+  animation: caer-txt .4s .18s cubic-bezier(.2,1.6,.4,1) both;
+}
+.tr-dia, .tr-clima, .tr-extra { grid-column: 1 / -1; justify-self: start; }
+.tr-dia {
+  font-family: var(--bloque); font-size: 1.2rem; letter-spacing: .3em; margin-top: 12px;
+  animation: caer-txt .4s .26s both;
+}
+.tr-clima {
+  font-family: var(--display); font-size: 2.2rem; text-transform: uppercase;
+  background: var(--negro); padding: 2px 16px; margin-top: 8px;
+  animation: caer-txt .4s .34s cubic-bezier(.2,1.6,.4,1) both;
+}
+.tr-extra {
+  font-family: var(--bloque); font-size: .95rem; letter-spacing: .1em; text-transform: uppercase;
+  background: var(--amarillo); color: var(--negro); padding: 4px 14px; margin-top: 10px;
+  animation: caer-txt .4s .42s cubic-bezier(.2,1.6,.4,1) both;
+}
+@keyframes caer-txt { from { opacity: 0; transform: translateY(-40px) scale(1.3); } }
+
+/* --- Logro desbloqueado --- */
+.toast-logro {
+  position: fixed; top: 24px; left: 50%; z-index: 65;
+  display: flex; align-items: center; gap: 16px;
+  max-width: min(92vw, 460px);
+  padding: 14px 30px 14px 22px;
+  background: var(--amarillo); color: var(--negro);
+  clip-path: var(--corte-2);
+  transform: translate(-50%, -220%) rotate(2deg); visibility: hidden;
+  transition: transform .4s cubic-bezier(.2,1.4,.4,1), visibility 0s .4s;
+}
+.toast-logro.visible { transform: translate(-50%, 0) rotate(2deg); visibility: visible; transition: transform .4s cubic-bezier(.2,1.4,.4,1); }
+.tl-ico { font-size: 2.4rem; }
+.toast-logro small { display: block; font-family: var(--bloque); font-size: .7rem; letter-spacing: .12em; color: var(--rojo); }
+.toast-logro b { display: block; font-family: var(--display); font-weight: 400; font-size: 1.6rem; text-transform: uppercase; line-height: 1.1; }
+.toast-logro span { font-size: .85rem; font-weight: 500; }
+
+/* --- Evento con elección --- */
+.evento-card {
+  position: relative;
+  width: min(560px, 100%); text-align: center;
+  padding: 44px 34px 32px;
+  background: var(--blanco); color: var(--negro);
+  clip-path: polygon(0 4%, 100% 0, 97% 100%, 3% 96%);
+  transform: scale(.6) rotate(-10deg); opacity: 0;
+  transition: transform .35s cubic-bezier(.2,1.6,.4,1), opacity .2s;
+}
+.modal.abierto .evento-card { transform: rotate(-1.5deg); opacity: 1; }
+.evento-tag {
+  position: absolute; top: 22px; left: 30px;
+  font-family: var(--bloque); font-size: .8rem; letter-spacing: .15em;
+  background: var(--rojo); color: var(--blanco); padding: 3px 12px; transform: rotate(-6deg);
+}
+.evento-ico { font-size: 4rem; animation: pop .5s; }
+.evento-titulo {
+  font-family: var(--display); font-weight: 400; font-size: 2.4rem; text-transform: uppercase; line-height: 1.05;
+  margin: 6px 0 10px;
+}
+.evento-texto { font-size: 1.08rem; font-weight: 500; line-height: 1.45; color: #333; margin-bottom: 24px; }
+.evento-opciones { display: grid; gap: 12px; }
+.evento-opcion {
+  display: flex; align-items: center; gap: 14px; text-align: left;
+  padding: 14px 20px;
+  background: var(--negro); color: var(--blanco);
+  clip-path: var(--corte-3);
+  transition: transform .15s cubic-bezier(.2,1.8,.4,1), background .1s;
+}
+.evento-opcion:nth-child(2) { background: #2a2a2a; clip-path: var(--corte-1); }
+.evento-opcion:hover { background: var(--rojo); transform: translateX(10px) rotate(-1.5deg); }
+.evento-opcion b { display: block; font-family: var(--display); font-weight: 400; font-size: 1.5rem; text-transform: uppercase; line-height: 1.05; }
+.evento-opcion small { font-size: .85rem; opacity: .85; }
+.evento-opcion kbd { font-size: .9rem; padding: 4px 9px; }
+
+/* --- Examen: tiempo, ayuda, nota --- */
+.examen.recuperacion { box-shadow: none; }
+.examen.recuperacion .examen-head { background: var(--amarillo); color: var(--negro); }
+.examen.recuperacion .examen-head h2 { text-shadow: 4px 4px 0 var(--blanco); }
+.pregunta-top { display: flex; justify-content: space-between; align-items: center; }
+.tiempo-num {
+  font-family: var(--display); font-size: 2rem; line-height: 1;
+  background: var(--blanco); color: var(--negro); padding: 0 10px; transform: skewX(-12deg);
+}
+.tiempo-num.urgente { background: var(--rojo); color: var(--blanco); animation: pop .4s; }
+.tiempo { height: 8px; margin: 4px 0 18px; background: #333; transform: skewX(-25deg); overflow: hidden; }
+.tiempo-fill { height: 100%; width: 100%; background: var(--blanco); transition-property: width; transition-timing-function: linear; }
+.tiempo-fill.corriendo { width: 0%; background: var(--rojo); transition-property: width, background-color; }
+.btn-ayuda {
+  margin-top: 16px; width: 100%;
+  padding: 10px; font-family: var(--bloque); font-size: .85rem; text-transform: uppercase;
+  background: var(--amarillo); color: var(--negro);
+  clip-path: var(--corte-3);
+  transition: transform .15s;
+}
+.btn-ayuda:hover:not(:disabled) { transform: scale(1.03) rotate(-1deg); }
+.btn-ayuda:disabled { opacity: .4; }
+.opcion.descartada { opacity: .25; text-decoration: line-through; }
+.examen-body { position: relative; }
+.sello {
+  position: absolute; right: 40px; top: 40%;
+  font-family: var(--display); font-size: 3.4rem;
+  color: var(--rojo); border: 5px solid var(--rojo); padding: 0 16px;
+  transform: rotate(-14deg);
+  animation: sellar .3s cubic-bezier(.2,1.8,.4,1) both;
+}
+@keyframes sellar { from { transform: rotate(-14deg) scale(3); opacity: 0; } }
+.r-nota {
+  display: inline-block;
+  font-family: var(--display); font-size: 5rem; line-height: 1;
+  color: var(--blanco); text-shadow: 6px 6px 0 var(--rojo);
+  margin-bottom: 6px;
+  animation: sellar .4s cubic-bezier(.2,1.8,.4,1) both;
+}
+.resultado-asig.suspenso .r-nota { color: var(--rojo); text-shadow: 6px 6px 0 var(--blanco); }
+
+/* --- Inicio: récords y logros --- */
+.dif-record {
+  font-family: var(--bloque); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--amarillo); margin-top: 4px;
+}
+.dif-card:hover .dif-record { color: var(--rojo); }
+.logros-inicio { margin-top: 70px; padding-bottom: 60px; }
+.logros-inicio .sel-titulo span { font-size: 1.4rem; background: var(--negro); color: var(--blanco); padding: 0 10px; text-shadow: none; }
+.logros-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+.logro {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 14px 16px;
+  background: rgba(0,0,0,.6); color: var(--gris);
+  clip-path: var(--corte-1);
+}
+.logro:nth-child(even) { clip-path: var(--corte-2); }
+.logro-ico { font-size: 1.6rem; filter: grayscale(1); }
+.logro b { font-family: var(--display); font-weight: 400; font-size: 1.15rem; text-transform: uppercase; }
+.logro small { font-size: .78rem; line-height: 1.3; }
+.logro.conseguido { background: var(--blanco); color: var(--negro); }
+.logro.conseguido .logro-ico { filter: none; }
+.logro.conseguido b { color: var(--rojo); }
+
+/* --- Final: boletín y logros --- */
+.boletin { margin: 0 auto 30px; max-width: 520px; }
+.boletin h3, .final-logros h3 {
+  display: inline-block; margin-bottom: 14px;
+  font-family: var(--display); font-weight: 400; font-size: 1.7rem; text-transform: uppercase;
+  background: var(--rojo); padding: 0 16px; transform: rotate(-2deg);
+}
+.boletin table {
+  width: 100%; border-collapse: collapse;
+  background: var(--blanco); color: var(--negro);
+  transform: rotate(1deg);
+}
+.boletin th, .boletin td { padding: 8px 10px; border-bottom: 2px solid var(--negro); }
+.boletin thead th { background: var(--negro); color: var(--blanco); font-family: var(--bloque); font-size: .8rem; }
+.boletin tbody th { text-align: left; font-weight: 700; font-size: .95rem; }
+.boletin td { font-family: var(--display); font-size: 1.5rem; text-align: center; }
+.boletin td.sus { color: var(--rojo); }
+.boletin td.vacia { color: #bbb; }
+.boletin sup { font-family: var(--bloque); font-size: .6rem; color: var(--rojo); margin-left: 2px; }
+.boletin tfoot th { text-align: left; font-family: var(--display); font-size: 1.4rem; font-weight: 400; }
+.boletin tfoot td { font-size: 2.2rem; background: var(--negro); color: var(--blanco); }
+.boletin tfoot td.sus { color: var(--rojo); }
+.boletin-nota { margin-top: 8px; font-size: .8rem; color: var(--gris); }
+.final-logros { margin-bottom: 30px; }
+.fl-lista { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.fl-logro {
+  font-family: var(--bloque); font-size: .8rem; text-transform: uppercase;
+  background: var(--amarillo); color: var(--negro); padding: 4px 12px; transform: skewX(-12deg);
+}
+.nuevo-record {
+  display: inline-block; margin-top: 12px;
+  font-family: var(--display); font-weight: 400; font-size: 1.8rem;
+  background: var(--amarillo); color: var(--negro); padding: 0 14px; transform: rotate(-3deg);
+  animation: latido 1s ease-in-out infinite;
+}
+
+/* =========================================================
+   EFECTOS ATMOSFÉRICOS
+   ========================================================= */
+.clima-fx {
+  position: fixed; inset: 0; z-index: 30;
+  pointer-events: none; overflow: hidden;
+}
+
+/* Lluvia y tormenta */
+.gota {
+  position: absolute; top: -120px;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,.9));
+  rotate: 15deg;
+  animation: llover linear infinite;
+}
+@keyframes llover { to { translate: -30vh 120vh; } }
+.tormenta .gota { width: 3px; }
+.clima-fx.lluvia, .clima-fx.tormenta { background: linear-gradient(to bottom, rgba(0,0,30,.25), transparent 70%); }
+.relampago {
+  position: absolute; inset: 0;
+  background: var(--blanco);
+  opacity: 0;
+  animation: relampago 7s infinite;
+}
+@keyframes relampago {
+  0%, 88%, 100% { opacity: 0; }
+  89% { opacity: .85; }
+  90% { opacity: .1; }
+  91% { opacity: .7; }
+  93% { opacity: 0; }
+}
+
+/* Nieve */
+.copo {
+  position: absolute; top: -20px;
+  background: var(--blanco); border-radius: 50%;
+  box-shadow: 0 0 6px rgba(255,255,255,.8);
+  animation-name: nevar, vaiven;
+  animation-timing-function: linear, ease-in-out;
+  animation-iteration-count: infinite, infinite;
+  animation-direction: normal, alternate;
+}
+@keyframes nevar { to { translate: 0 110vh; } }
+@keyframes vaiven { from { transform: translateX(calc(var(--vaiven) * -1)); } to { transform: translateX(var(--vaiven)); } }
+.clima-fx.nieve { background: linear-gradient(to bottom, rgba(220,235,255,.18), transparent 60%); }
+
+/* Viento */
+.rafaga {
+  position: absolute; left: -300px; height: 2px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,.7), transparent);
+  animation: soplar linear infinite;
+}
+@keyframes soplar { to { translate: calc(100vw + 600px) 0; } }
+.hoja {
+  position: absolute; left: -60px;
+  animation: hoja-volar linear infinite;
+}
+@keyframes hoja-volar {
+  0%   { translate: 0 0; rotate: 0deg; }
+  25%  { translate: 30vw -40px; }
+  50%  { translate: 55vw 30px; }
+  75%  { translate: 80vw -20px; }
+  100% { translate: calc(100vw + 120px) 20px; rotate: 720deg; }
+}
+
+/* Niebla */
+.bruma {
+  position: absolute; left: -50%; width: 200%; height: 45%;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,.5), transparent 65%);
+  filter: blur(20px);
+  animation: bruma ease-in-out infinite alternate;
+}
+@keyframes bruma { from { translate: -15% 0; } to { translate: 15% 0; } }
+.clima-fx.niebla { background: rgba(230,230,230,.22); }
+
+/* Nublado */
+.nube {
+  position: absolute; left: -600px;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,.7), rgba(255,255,255,0) 70%);
+  filter: blur(6px);
+  animation: nube linear infinite;
+}
+@keyframes nube { to { translate: calc(100vw + 1200px) 0; } }
+.clima-fx.nublado { background: linear-gradient(to bottom, rgba(40,40,60,.25), transparent 50%); }
+
+/* Sol y calor */
+.sol {
+  position: absolute; right: -180px; top: -180px;
+  width: 520px; height: 520px; border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255,230,0,.55) 0 18%, transparent 19%),
+    repeating-conic-gradient(rgba(255,240,150,.25) 0deg 8deg, transparent 8deg 20deg);
+  mask-image: radial-gradient(circle, #000 30%, transparent 70%);
+  animation: girar 30s linear infinite;
+}
+.calima {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(255,140,0,.28), transparent 55%);
+  animation: calima 3s ease-in-out infinite alternate;
+}
+@keyframes calima { to { opacity: .55; } }
+.burbuja-calor {
+  position: absolute; bottom: -40px;
+  width: 60px; height: 120px;
+  border-left: 3px solid rgba(255,255,255,.25);
+  border-radius: 50%;
+  animation: subir-calor ease-in infinite;
+}
+@keyframes subir-calor {
+  from { translate: 0 0; opacity: 0; }
+  30%  { opacity: 1; }
+  to   { translate: 30px -60vh; opacity: 0; scale: 1.6 .6; }
+}
 
 /* =========================================================
    RESPONSIVE
@@ -557,6 +1011,7 @@ button:disabled { cursor: not-allowed; }
   .layout { grid-template-columns: 1fr; }
   .consola { position: static; transform: none; }
   .consola-body { height: 260px; }
+  .companeros { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) {
   .pantalla { padding: 18px 14px; }
@@ -570,8 +1025,15 @@ button:disabled { cursor: not-allowed; }
   .examen-head, .examen-body { padding-left: 22px; padding-right: 22px; }
   .examen-head h2 { font-size: 2.1rem; }
   .pregunta-txt { font-size: 1.45rem; }
+  .final-stats { grid-template-columns: repeat(2, 1fr); }
+  .final-card { padding: 40px 18px; }
+  .boletin tbody th { font-size: .8rem; }
+  .clima-panel { padding: 14px 18px; }
+  .clima-tags { grid-column: 1 / -1; }
+  .sello { right: 10px; font-size: 2.4rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
+  .clima-fx { display: none; }
 }

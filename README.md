@@ -85,6 +85,7 @@ web/
 ## 🛠️ Tecnologías
 
 - HTML5
-- CSS3 (variables, grid, flexbox, animaciones, `backdrop-filter`)
+- CSS3 (variables, grid, flexbox, animaciones, `clip-path`, transformaciones)
 - JavaScript (sin librerías)
-- Fuentes: [Space Grotesk](https://fonts.google.com/specimen/Space+Grotesk) y [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono)
+- Fuentes: [Anton](https://fonts.google.com/specimen/Anton), [Archivo Black](https://fonts.google.com/specimen/Archivo+Black) y [Oswald](https://fonts.google.com/specimen/Oswald)
+- Estética inspirada en los menús de *Persona 5 Royal* (rojo, negro y blanco, formas inclinadas y tramas de puntos)

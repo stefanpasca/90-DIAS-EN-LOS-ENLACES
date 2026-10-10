@@ -6,12 +6,18 @@
   <title>90 Días en los Enlaces</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="bg-grid" aria-hidden="true"></div>
   <div class="bg-glow" aria-hidden="true"></div>
+
+  <!-- Capa de efectos del clima (lluvia, nieve, viento…) -->
+  <div class="clima-fx" id="clima-fx" aria-hidden="true"></div>
+
+  <!-- Botón de sonido -->
+  <button class="btn-sonido" id="btn-sonido" title="Activar / silenciar sonido">🔊</button>
 
   <!-- ============ PANTALLA DE INICIO ============ -->
   <section id="pantalla-inicio" class="pantalla activa">
@@ -21,7 +27,7 @@
         <span class="titulo-num">90</span>
         <span class="titulo-txt">días en los<br><em>enlaces</em></span>
       </h1>
-      <p class="hero-sub">Gestiona tu energía, controla el estrés y aprueba las tres evaluaciones.<br>Si el estrés pasa de <b>20</b> o no llegas al nivel mínimo… suspendes.</p>
+      <p class="hero-sub">Gestiona tu energía, controla el estrés, haz amigos y sobrevive al clima.<br>Aprueba las tres evaluaciones… o al menos las recuperaciones. Si el estrés pasa de <b>20</b>, te quedas en blanco.</p>
     </header>
 
     <h2 class="sel-titulo">Elige quién eres</h2>
@@ -31,23 +37,31 @@
         <span class="dif-nombre">NERD</span>
         <span class="dif-nivel">Fácil</span>
         <span class="dif-desc">Tragalibros nacido con la habilidad de estudiar al máximo nivel. Esto es lo tuyo.</span>
-        <span class="dif-stats"><span>⚡ 12</span><span>📚 +6</span><span>🔥 +3</span></span>
+        <span class="dif-stats"><span>⚡ 12</span><span>📚 +6</span><span>🔥 +3</span><span>⏱ 18s</span></span>
+        <span class="dif-record" data-record="1"></span>
       </button>
       <button class="dif-card" data-dif="2">
         <span class="dif-emoji">😐</span>
         <span class="dif-nombre">MEDIOCRE</span>
         <span class="dif-nivel">Normal</span>
         <span class="dif-desc">Nunca has destacado en nada, pero te defiendes. La mediocridad te define.</span>
-        <span class="dif-stats"><span>⚡ 10</span><span>📚 +5</span><span>🔥 +4</span></span>
+        <span class="dif-stats"><span>⚡ 10</span><span>📚 +5</span><span>🔥 +4</span><span>⏱ 15s</span></span>
+        <span class="dif-record" data-record="2"></span>
       </button>
       <button class="dif-card" data-dif="3">
         <span class="dif-emoji">💀</span>
         <span class="dif-nombre">FRACASADO</span>
         <span class="dif-nivel">Difícil</span>
         <span class="dif-desc">No has dado un palo al agua en la vida. Buena suerte, la vas a necesitar.</span>
-        <span class="dif-stats"><span>⚡ 8</span><span>📚 +4</span><span>🔥 +5</span></span>
+        <span class="dif-stats"><span>⚡ 8</span><span>📚 +4</span><span>🔥 +5</span><span>⏱ 12s</span></span>
+        <span class="dif-record" data-record="3"></span>
       </button>
     </div>
+
+    <section class="logros-inicio">
+      <h2 class="sel-titulo">Logros <span id="logros-contador"></span></h2>
+      <div class="logros-grid" id="logros-grid"></div>
+    </section>
   </section>
 
   <!-- ============ PANTALLA DE JUEGO ============ -->
@@ -70,26 +84,58 @@
 
     <main class="layout">
       <div class="col-principal">
-        <div class="energia-panel">
-          <div class="energia-head">
-            <span>⚡ Energía</span>
-            <span class="energia-val"><b id="energia-val">10</b> / <span id="energia-max">10</span></span>
+        <div class="fila-estado">
+          <div class="clima-panel" id="clima-panel">
+            <span class="clima-ico" id="clima-ico">☀️</span>
+            <div class="clima-info">
+              <span class="clima-fecha" id="clima-fecha"></span>
+              <b class="clima-nombre" id="clima-nombre"></b>
+              <small class="clima-desc" id="clima-desc"></small>
+            </div>
+            <div class="clima-tags" id="clima-tags"></div>
           </div>
-          <div class="energia-celdas" id="energia-celdas"></div>
+
+          <div class="energia-panel">
+            <div class="energia-head">
+              <span>⚡ Energía</span>
+              <span class="energia-val"><b id="energia-val">10</b> / <span id="energia-max">10</span></span>
+            </div>
+            <div class="energia-celdas" id="energia-celdas"></div>
+          </div>
         </div>
 
         <div class="asignaturas" id="asignaturas"></div>
 
         <div class="acciones">
-          <button class="btn btn-relax" id="btn-relajarse">
+          <button class="btn btn-accion" id="btn-relajarse">
             <span class="btn-ico">🧘</span>
-            <span class="btn-txt">Relajarse<small id="relax-info">−3 ⚡ +2 ⚡ · −2 🔥 en todas</small></span>
+            <span class="btn-txt">Relajarse<small id="info-relajarse"></small></span>
+            <kbd>R</kbd>
+          </button>
+          <button class="btn btn-accion" id="btn-siesta">
+            <span class="btn-ico">😴</span>
+            <span class="btn-txt">Siesta<small id="info-siesta"></small></span>
+            <kbd>S</kbd>
+          </button>
+          <button class="btn btn-accion" id="btn-deporte">
+            <span class="btn-ico">🏃</span>
+            <span class="btn-txt">Deporte<small id="info-deporte"></small></span>
+            <kbd>D</kbd>
+          </button>
+          <button class="btn btn-accion" id="btn-fiesta">
+            <span class="btn-ico">🪩</span>
+            <span class="btn-txt">Fiesta<small id="info-fiesta"></small></span>
+            <kbd>F</kbd>
           </button>
           <button class="btn btn-fin" id="btn-terminar">
             <span class="btn-ico">🌙</span>
-            <span class="btn-txt">Terminar día<small>Recupera toda la energía</small></span>
+            <span class="btn-txt">Terminar día<small>Mañana recuperas toda la energía</small></span>
+            <kbd>Espacio</kbd>
           </button>
         </div>
+
+        <h3 class="subtitulo">Compañeros</h3>
+        <div class="companeros" id="companeros"></div>
       </div>
 
       <aside class="consola">
@@ -102,8 +148,32 @@
     </main>
   </section>
 
-  <!-- ============ EVENTO DEL DÍA ============ -->
+  <!-- ============ TRANSICIÓN DE DÍA ============ -->
+  <div class="transicion" id="transicion" aria-hidden="true">
+    <div class="tr-franja"></div>
+    <div class="tr-contenido">
+      <span class="tr-semana" id="tr-semana"></span>
+      <span class="tr-fecha" id="tr-fecha"></span>
+      <span class="tr-dia" id="tr-dia"></span>
+      <span class="tr-clima" id="tr-clima"></span>
+      <span class="tr-extra" id="tr-extra"></span>
+    </div>
+  </div>
+
+  <!-- ============ AVISOS ============ -->
   <div class="toast" id="toast" role="status"></div>
+  <div class="toast-logro" id="toast-logro" role="status"></div>
+
+  <!-- ============ MODAL EVENTO CON ELECCIÓN ============ -->
+  <div class="modal" id="modal-evento" aria-hidden="true">
+    <div class="evento-card">
+      <span class="evento-tag">¡DECISIÓN!</span>
+      <div class="evento-ico" id="evento-ico"></div>
+      <h2 class="evento-titulo" id="evento-titulo"></h2>
+      <p class="evento-texto" id="evento-texto"></p>
+      <div class="evento-opciones" id="evento-opciones"></div>
+    </div>
+  </div>
 
   <!-- ============ MODAL EXAMEN ============ -->
   <div class="modal" id="modal-examen" aria-hidden="true">
@@ -123,7 +193,9 @@
       <p class="final-emoji" id="final-emoji">🎓</p>
       <h1 class="final-titulo" id="final-titulo">¡CURSO SUPERADO!</h1>
       <p class="final-texto" id="final-texto"></p>
+      <div class="boletin" id="boletin"></div>
       <div class="final-stats" id="final-stats"></div>
+      <div class="final-logros" id="final-logros"></div>
       <button class="btn btn-primario" id="btn-reiniciar">Volver a empezar</button>
     </div>
   </section>
