@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>90 Días en los Enlaces</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <!-- ============ PANTALLA DE INICIO ============ -->
+  <section id="pantalla-inicio" class="pantalla activa">
+    <header class="hero">
+      <p class="hero-tag">// curso 1º DAM · simulador de supervivencia</p>
+      <h1 class="titulo">
+        <span class="titulo-num">90</span>
+        <span class="titulo-txt">días en los<br><em>enlaces</em></span>
+      </h1>
+      <p class="hero-sub">Gestiona tu energía, controla el estrés y aprueba las tres evaluaciones.<br>Si el estrés pasa de <b>20</b> o no llegas al nivel mínimo… suspendes.</p>
+    </header>
+
+    <h2 class="sel-titulo">Elige quién eres</h2>
+    <div class="dificultades">
+      <button class="dif-card" data-dif="1">
+        <span class="dif-emoji">🤓</span>
+        <span class="dif-nombre">NERD</span>
+        <span class="dif-nivel">Fácil</span>
+        <span class="dif-desc">Tragalibros nacido con la habilidad de estudiar al máximo nivel. Esto es lo tuyo.</span>
+        <span class="dif-stats"><span>⚡ 12</span><span>📚 +6</span><span>🔥 +3</span></span>
+      </button>
+      <button class="dif-card" data-dif="2">
+        <span class="dif-emoji">😐</span>
+        <span class="dif-nombre">MEDIOCRE</span>
+        <span class="dif-nivel">Normal</span>
+        <span class="dif-desc">Nunca has destacado en nada, pero te defiendes. La mediocridad te define.</span>
+        <span class="dif-stats"><span>⚡ 10</span><span>📚 +5</span><span>🔥 +4</span></span>
+      </button>
+      <button class="dif-card" data-dif="3">
+        <span class="dif-emoji">💀</span>
+        <span class="dif-nombre">FRACASADO</span>
+        <span class="dif-nivel">Difícil</span>
+        <span class="dif-desc">No has dado un palo al agua en la vida. Buena suerte, la vas a necesitar.</span>
+        <span class="dif-stats"><span>⚡ 8</span><span>📚 +4</span><span>🔥 +5</span></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ PANTALLA DE JUEGO ============ -->
+  <section id="pantalla-juego" class="pantalla">
+    <header class="topbar">
+      <div class="dia-box">
+        <span class="dia-label">DÍA</span>
+        <span class="dia-num" id="dia-num">1</span>
+        <span class="dia-total">/ 90</span>
+      </div>
+      <div class="progreso-curso">
+        <div class="trimestres">
+          <span>1ª Eval</span><span>2ª Eval</span><span>3ª Eval</span>
+        </div>
+        <div class="calendario" id="calendario"></div>
+        <p class="proximo" id="proximo-examen"></p>
+      </div>
+      <div class="perfil" id="perfil"></div>
+    </header>
+
+    <main class="layout">
+      <div class="col-principal">
+        <div class="energia-panel">
+          <div class="energia-head">
+            <span>⚡ Energía</span>
+            <span class="energia-val"><b id="energia-val">10</b> / <span id="energia-max">10</span></span>
+          </div>
+          <div class="energia-celdas" id="energia-celdas"></div>
+        </div>
+
+        <div class="asignaturas" id="asignaturas"></div>
+
+        <div class="acciones">
+          <button class="btn btn-relax" id="btn-relajarse">
+            <span class="btn-ico">🧘</span>
+            <span class="btn-txt">Relajarse<small id="relax-info">−3 ⚡ +2 ⚡ · −2 🔥 en todas</small></span>
+          </button>
+          <button class="btn btn-fin" id="btn-terminar">
+            <span class="btn-ico">🌙</span>
+            <span class="btn-txt">Terminar día<small>Recupera toda la energía</small></span>
+          </button>
+        </div>
+      </div>
+
+      <aside class="consola">
+        <div class="consola-head">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="consola-titulo">registro.log</span>
+        </div>
+        <ol class="consola-body" id="log"></ol>
+      </aside>
+    </main>
+  </section>
+
+  <!-- ============ EVENTO DEL DÍA ============ -->
+  <div class="toast" id="toast" role="status"></div>
+
+  <!-- ============ MODAL EXAMEN ============ -->
+  <div class="modal" id="modal-examen" aria-hidden="true">
+    <div class="examen">
+      <div class="examen-head">
+        <span class="examen-eval" id="examen-eval">1ª EVALUACIÓN</span>
+        <h2 id="examen-asig">Programación</h2>
+        <div class="examen-pasos" id="examen-pasos"></div>
+      </div>
+      <div class="examen-body" id="examen-body"></div>
+    </div>
+  </div>
+
+  <!-- ============ PANTALLA FINAL ============ -->
+  <section id="pantalla-final" class="pantalla">
+    <div class="final-card" id="final-card">
+      <p class="final-emoji" id="final-emoji">🎓</p>
+      <h1 class="final-titulo" id="final-titulo">¡CURSO SUPERADO!</h1>
+      <p class="final-texto" id="final-texto"></p>
+      <div class="final-stats" id="final-stats"></div>
+      <button class="btn btn-primario" id="btn-reiniciar">Volver a empezar</button>
+    </div>
+  </section>
+
+  <script src="game.js"></script>
+</body>
+</html>
